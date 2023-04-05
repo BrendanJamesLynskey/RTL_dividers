@@ -91,9 +91,10 @@ endtask
 
 initial begin
 
-    // Create stimulus in 2-state signed 32b integers
-    logic signed [WORD_WIDTH-1:0] stim_num;
-    logic signed [WORD_WIDTH-1:0] stim_den;
+    // Create stimulus in 2-state signed integers
+    //  32b variables enable counting past max values (NB: expand for very large widths)
+    int stim_num;
+    int stim_den;
 
 
     // Allow reset to complete
@@ -104,8 +105,8 @@ initial begin
     // Stimulus: sweep divider params exhaustively
     // Check results on the fly
     if (TB_TEST_CNT == 0) begin
-        for (stim_num = stim_num_min; stim_num <= stim_num_max; stim_num++)
-            for (stim_den = stim_den_min; stim_den <= stim_num_max; stim_den++)
+        for (stim_num = stim_num_min; stim_num <= stim_num_max; stim_num++)        
+            for (stim_den = stim_den_min; stim_den <= stim_den_max; stim_den++)
                 stim_check_divider(stim_num, stim_den);
                 
     end else begin

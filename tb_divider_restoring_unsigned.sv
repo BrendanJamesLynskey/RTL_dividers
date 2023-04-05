@@ -20,7 +20,7 @@ localparam logic unsigned [DIV_DEN_BITS-1:0] stim_den_min = 0;
 localparam logic unsigned [DIV_DEN_BITS-1:0] stim_den_max = (2**DIV_DEN_BITS)-1;
 
 // Parameterise TB
-localparam TB_TEST_CNT  = 1000; // Zero for exhaustive
+localparam TB_TEST_CNT  = 0; // Zero for exhaustive
 
 // Clocks and resets
 logic tb_srst   = 1'b1;
@@ -87,6 +87,8 @@ endtask
 
 initial begin
 
+    // Create stimulus in 2-state signed integers
+    //  32b variables enable counting past max values (NB: expand for very large widths)
     int stim_num;
     int stim_den;
 

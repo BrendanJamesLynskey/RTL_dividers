@@ -90,6 +90,8 @@ endtask
 
 initial begin
 
+    // Create stimulus in 2-state signed integers
+    //  32b variables enable counting past max values (NB: expand for very large widths)
     int stim_num;
     int stim_den;
 
