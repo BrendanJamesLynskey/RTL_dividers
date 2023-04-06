@@ -1,2 +1,3 @@
 # RTL_dividers
-Conventional RTL dividers, with TBs  
+RTL dividers, which perform the 'long division' algorithm in various ways.
+Testbenches included  
