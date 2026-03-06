@@ -161,13 +161,14 @@ All digit-recurrence methods share the same critical path: the N-bit adder plus 
 
 | Property | Restoring | Non-performing | Non-restoring | SRT-4 | Newton–Raphson |
 |---|---|---|---|---|---|
-| Latency | N | N | N+1 | N/2 | O(log N) |
+| Latency | N | N | N+1 | N/2 + 3 | O(log N) |
 | Area | Low | Low | Low | Low–Med | High |
-| Fmax | High | High | High | Medium | Limited by MUL |
+| Fmax | High | High | High | Medium (2 adders/cycle) | Limited by MUL |
 | Power/cycle | Medium | Low | Medium | Medium | High |
 | Signed | Extension needed | Extension needed | Native | Extension needed | Extension needed |
 | Exact remainder | Yes | Yes | Yes | Yes | Non-trivial |
 | Implementation complexity | Low | Low | Low–Med | Medium | High |
+| Implemented here | Yes | Yes | Yes | Yes | No |
 
 ---
 
@@ -187,15 +188,39 @@ All digit-recurrence methods share the same critical path: the N-bit adder plus 
 
 ## 6. Implementation Notes for This Repository
 
-The three modules in this repository cover the three archetypal iterative architectures at radix-2:
+Four modules are provided, covering the archetypal iterative division architectures:
 
 - `divider_restoring_unsigned.sv` — baseline reference; simplest control logic.
 - `divider_nonperforming_unsigned.sv` — power-optimised variant; same interface and area as restoring.
 - `divider_nonrestoring_signed.sv` — preferred for signed arithmetic; avoids extra conversion logic.
+- `divider_srt4_unsigned.sv` — SRT radix-4; halves latency by producing two quotient bits per cycle.
 
-All three operate iteratively (one quotient bit per clock), use a single shared adder/subtractor, and produce both quotient and remainder. They are parameterised by operand width `N` and are synthesisable without modification.
+All four are parameterised by operand width `N`, use a single shared adder/subtractor per active step, and produce both quotient and remainder. They are synthesisable without modification.
 
-For extension to higher performance, the natural next steps are: radix-4 SRT (halve latency), or a pipelined non-restoring core (accept a new dividend every cycle at the cost of N pipeline stages and N partial-remainder registers).
+### SRT Radix-4 Implementation Detail
+
+The SRT-4 module (`divider_srt4_unsigned.sv`) implements radix-4 division by performing **two consecutive non-restoring steps within each clock cycle**, rather than using an SRT PLA (quotient-digit selection table).
+
+Each cycle processes two numerator bits (the next most-significant pair), producing a combined quotient digit from the redundant set {−3, −2, −1, 0, +1, +2, +3}:
+
+```
+Step 1:  P_mid = 2·P_in + bit(2i)    then  q1 = sign(P_mid),  P_mid -= q1·D
+Step 2:  P_out = 2·P_mid + bit(2i+1) then  q2 = sign(P_out),  P_out -= q2·D
+Combined digit: q = 2·q1 + q2
+```
+
+The quotient is accumulated in a redundant (signed-digit) representation using two unsigned registers, QPOS and QNEG, with the final binary quotient recovered as QPOS − QNEG.
+
+**Critical path:** Two cascaded adder/subtractors of width `DEN_BITS + 2` per cycle. For high-frequency targets, register the intermediate result P_mid to split the two steps across two clock edges, trading one extra cycle of latency per iteration (effectively recovering the radix-2 latency) but enabling a higher Fmax.
+
+**Latency comparison for N = 32:**
+
+| Module | Cycles (approx) |
+|---|---|
+| Restoring / Non-performing / Non-restoring | ~34 |
+| SRT radix-4 | ~19 |
+
+**Formal verification note:** Unlike PLA-based high-radix SRT implementations (which were the root cause of the Pentium FDIV bug), the two-step non-restoring formulation used here is structurally correct by construction — there is no lookup table whose entries could be incorrectly programmed. The correctness of the digit-selection logic (two sign-bit checks) is straightforward to verify formally or by exhaustive simulation at small widths.
 
 ---
 
