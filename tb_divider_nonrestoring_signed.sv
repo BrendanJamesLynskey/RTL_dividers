@@ -158,7 +158,7 @@ divider_nonrestoring_signed #(WORD_WIDTH) u_divider_nonrestoring_signed
     
     .NUMERATOR_IN       (tb_numerator),
     .DENOMINATOR_IN     (tb_denominator),
-    .QUOTENT_OUT        (tb_quotient),
+    .QUOTIENT_OUT        (tb_quotient),
     .REMAINDER_OUT      (tb_remainder),
         
     .start              (tb_start),

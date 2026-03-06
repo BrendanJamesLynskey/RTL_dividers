@@ -44,7 +44,7 @@ module divider_nonrestoring_signed
     
     input  logic signed [WORD_WIDTH-1:0]    NUMERATOR_IN,
     input  logic signed [WORD_WIDTH-1:0]    DENOMINATOR_IN,
-    output logic signed [WORD_WIDTH-1:0]    QUOTENT_OUT,
+    output logic signed [WORD_WIDTH-1:0]    QUOTIENT_OUT,
     output logic signed [WORD_WIDTH-1:0]    REMAINDER_OUT,
 
     
@@ -72,7 +72,7 @@ always_ff @(posedge CLK) begin
 
     if (SRST) begin
         state           <= S_IDLE;
-        QUOTENT_OUT     <= '0;
+        QUOTIENT_OUT    <= '0;
         REMAINDER_OUT   <= '0;
         error           <= '0;
         done            <= 1'b0;
@@ -97,7 +97,7 @@ always_ff @(posedge CLK) begin
     
                 if (start) begin
                     // Prime rem register with correct sign-extension for numerator
-                    if (den>=0)
+                    if (DENOMINATOR_IN>=0)
                         {rem, quot_poly} <= {'0, NUMERATOR_IN};
                     else
                         {rem, quot_poly} <= {'1, NUMERATOR_IN};
@@ -177,10 +177,10 @@ always_ff @(posedge CLK) begin
             end    
             
             // Output result
-            default: begin  //S_OUTPUT
+            S_OUTPUT: begin
                 state           <= S_IDLE;
             
-                QUOTENT_OUT     <= quot_2c_d;
+                QUOTIENT_OUT    <= quot_2c_d;
                 REMAINDER_OUT   <= rem[WORD_WIDTH-1:0];
                 
                 done            <= 1'b1;

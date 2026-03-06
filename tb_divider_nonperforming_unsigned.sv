@@ -37,10 +37,10 @@ end
 
 
 // Stim and checking
-int     tb_numerator;
-int     tb_denominator;
-int     tb_quotient;
-int     tb_remainder;
+logic unsigned [DIV_NUM_BITS-1:0]   tb_numerator;
+logic unsigned [DIV_DEN_BITS-1:0]   tb_denominator;
+logic unsigned [DIV_NUM_BITS-1:0]   tb_quotient;
+logic unsigned [DIV_DEN_BITS-1:0]   tb_remainder;
                                               
 logic   tb_start = 1'b0;
 logic   tb_error;
@@ -121,7 +121,7 @@ initial begin
         stim_num = stim_num_min; stim_den = stim_den_max;
         stim_check_divider(stim_num, stim_den, stim_num/stim_den, stim_num%stim_den);
 
-        stim_num = stim_num_max; stim_den = stim_den_max;
+        stim_num = stim_num_max; stim_den = stim_den_min;
         stim_check_divider(stim_num, stim_den, stim_num/stim_den, stim_num%stim_den);
 
         // Test a number of random values
@@ -152,7 +152,7 @@ divider_nonperforming_unsigned #(DIV_NUM_BITS, DIV_DEN_BITS) u_divider_nonperfor
     
     .NUMERATOR_IN       (tb_numerator),
     .DENOMINATOR_IN     (tb_denominator),
-    .QUOTENT_OUT        (tb_quotient),
+    .QUOTIENT_OUT        (tb_quotient),
     .REMAINDER_OUT      (tb_remainder),
         
     .start              (tb_start),

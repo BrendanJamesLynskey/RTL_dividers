@@ -32,7 +32,7 @@ module divider_restoring_unsigned
     
     input  logic unsigned [DIV_NUM_BITS-1:0]  NUMERATOR_IN,
     input  logic unsigned [DIV_DEN_BITS-1:0]  DENOMINATOR_IN,
-    output logic unsigned [DIV_NUM_BITS-1:0]  QUOTENT_OUT,
+    output logic unsigned [DIV_NUM_BITS-1:0]  QUOTIENT_OUT,
     output logic unsigned [DIV_DEN_BITS-1:0]  REMAINDER_OUT,
 
     
@@ -53,7 +53,7 @@ logic [$clog2(DIV_NUM_BITS)-1:0] cnt_subs;
 always_ff @(posedge CLK) begin
     if (SRST) begin
         state           <= S_IDLE;
-        QUOTENT_OUT     <= '0;
+        QUOTIENT_OUT    <= '0;
         REMAINDER_OUT   <= '0;
         error           <= '0;
         done            <= 1'b0;
@@ -123,10 +123,10 @@ always_ff @(posedge CLK) begin
     
             
             // Output result
-            default: begin  //S_OUTPUT
+            S_OUTPUT: begin
                 state           <= S_IDLE;
             
-                QUOTENT_OUT     <= rem_quot[DIV_NUM_BITS-1:0];
+                QUOTIENT_OUT    <= rem_quot[DIV_NUM_BITS-1:0];
                 REMAINDER_OUT   <= rem_quot[DIV_NUM_BITS+DIV_DEN_BITS-1:DIV_NUM_BITS];
                 
                 done            <= 1'b1;
