@@ -166,9 +166,9 @@ All digit-recurrence methods share the same critical path: the N-bit adder plus 
 | Fmax | High | High | High | Medium (2 adders/cycle) | Limited by MUL |
 | Power/cycle | Medium | Low | Medium | Medium | High |
 | Signed | Extension needed | Extension needed | Native | Extension needed | Extension needed |
-| Exact remainder | Yes | Yes | Yes | Yes | Non-trivial |
+| Exact remainder | Yes | Yes | Yes | Yes | Yes (correction loop) |
 | Implementation complexity | Low | Low | Low–Med | Medium | High |
-| Implemented here | Yes | Yes | Yes | Yes | No |
+| Implemented here | Yes | Yes | Yes | Yes | Yes |
 
 ---
 
@@ -188,16 +188,31 @@ All digit-recurrence methods share the same critical path: the N-bit adder plus 
 
 ## 6. Implementation Notes for This Repository
 
-Four modules are provided, covering the archetypal iterative division architectures:
+Five modules are provided, covering the archetypal iterative division architectures:
 
 - `divider_restoring_unsigned.sv` — baseline reference; simplest control logic.
 - `divider_nonperforming_unsigned.sv` — power-optimised variant; same interface and area as restoring.
 - `divider_nonrestoring_signed.sv` — preferred for signed arithmetic; avoids extra conversion logic.
 - `divider_srt4_unsigned.sv` — SRT radix-4; halves latency by producing two quotient bits per cycle.
+- `divider_newtonraphson_unsigned.sv` — functional iteration; constant latency, multiplier-based.
 
-All four are parameterised by operand width `N`, use a single shared adder/subtractor per active step, and produce both quotient and remainder. They are synthesisable without modification.
+The four digit-recurrence modules are parameterised by operand width `N`, use a single shared adder/subtractor per active step, and produce both quotient and remainder. They are synthesisable without modification.
 
-### SRT Radix-4 Implementation Detail
+### 6.1 Newton–Raphson: Justification for a Fixed-Point Integer Implementation
+
+Newton–Raphson division is most commonly presented in floating-point processor contexts, where the normalisation step is implicit in the exponent field and a fused multiply-add (FMA) unit is assumed to be available. Its inclusion here in an integer, fixed-point RTL repository requires justification.
+
+**Completing the algorithm taxonomy.** The four digit-recurrence modules span the shift-and-subtract design space from the simplest (restoring) to the most latency-efficient (SRT radix-4). Newton–Raphson is the principal alternative algorithm family. A repository that omits it gives an incomplete picture of the tradeoff landscape, in particular missing the crossover point at which the area cost of a multiplier is offset by the reduction in cycle count for wide operands.
+
+**Constant latency.** All digit-recurrence dividers have latency that is technically bounded but varies with the quotient bit pattern in practice — correction, restoration, and digit-zero steps occur or are skipped depending on the input values. Newton–Raphson's latency is strictly constant: it depends only on operand width and the chosen iteration count, never on the values of numerator or denominator. This property is architecturally significant in fixed-latency pipelines, real-time systems with hard timing deadlines, and any design where variable-latency division would require stall or bubble insertion logic.
+
+**RTL multipliers are first-class resources.** The assumption that N-R requires a dedicated FMA unit is a processor-architecture habit, not an RTL constraint. In FPGA and ASIC designs, DSP multiplier blocks are a standard primitive. A datapath that already contains multipliers for a MAC unit, convolution, or matrix operator can reuse them for N-R division with no additional area. The fixed-point formulation here makes that reuse direct and transparent — the same multiplier inference attributes (e.g., `USE_DSP = "yes"`) that target DSP48 blocks in the surrounding design apply without modification.
+
+**Fixed-point is the natural form for RTL.** N-R is most often described with floating-point normalisation because that is where the algorithm sees most processor use. However, the iteration `X ← X(2 − DX)` is purely a fixed-point recurrence; floating-point is not required. Implementing it in integer fixed-point, as done here, removes the floating-point library dependency, exposes the arithmetic directly as it executes in hardware, and makes the design portable across any synthesisable RTL flow. The normalisation step — left-shifting the denominator until its MSB is 1 — requires only a leading-one detector and a barrel shifter, both standard RTL primitives.
+
+**Exact integer result with provable correction bound.** A common objection to N-R for integer division is that fixed-point rounding accumulates over iterations and the final quotient is approximate, making exact-remainder recovery non-trivial. This is addressed directly in `divider_newtonraphson_unsigned.sv`. The fixed-point precision is chosen so that the approximation error after `ITERATIONS` steps is bounded to ±2 ulp of the true quotient. The post-iteration correction loop adjusts the quotient by at most ±1 unit per cycle and terminates in at most two cycles for any input. The exact remainder is then recovered as `N − Q × D`. The result is bit-for-bit identical to the digit-recurrence modules and is verified by the same exhaustive self-checking testbench.
+
+### 6.2 SRT Radix-4 Implementation Detail
 
 The SRT-4 module (`divider_srt4_unsigned.sv`) implements radix-4 division by performing **two consecutive non-restoring steps within each clock cycle**, rather than using an SRT PLA (quotient-digit selection table).
 
@@ -219,8 +234,25 @@ The quotient is accumulated in a redundant (signed-digit) representation using t
 |---|---|
 | Restoring / Non-performing / Non-restoring | ~34 |
 | SRT radix-4 | ~19 |
+| Newton–Raphson (ITERATIONS=3) | ~11 |
 
 **Formal verification note:** Unlike PLA-based high-radix SRT implementations (which were the root cause of the Pentium FDIV bug), the two-step non-restoring formulation used here is structurally correct by construction — there is no lookup table whose entries could be incorrectly programmed. The correctness of the digit-selection logic (two sign-bit checks) is straightforward to verify formally or by exhaustive simulation at small widths.
+
+### 6.3 Newton–Raphson Implementation Detail
+
+The Newton–Raphson module (`divider_newtonraphson_unsigned.sv`) computes integer quotient and exact remainder via the following pipeline of FSM states:
+
+**S_NORMALISE:** The denominator D is left-shifted until its MSB is 1, producing D_norm ∈ [0.5, 1). The shift count `norm_shift` is stored for denormalisation. The top `SEED_BITS − 1` bits of D_norm index a seed ROM that returns X_0 ≈ 1/D_norm in Q0.FRAC_BITS fixed-point format, where FRAC_BITS = DEN_BITS + 2.
+
+**S_MUL_DX / S_MUL_UPDATE (repeated ITERATIONS times):** Each iteration consists of two multiply cycles. S_MUL_DX computes `DX = D_norm × X` and S_MUL_UPDATE computes `X ← X × (2 − DX)`. The factor `(2 − DX)` is formed by subtracting DX from the representation of 2.0 in the same fixed-point format. After `ITERATIONS` steps, X approximates 1/D_norm to FRAC_BITS significant bits.
+
+**S_RECIPROCAL_DONE:** The approximate quotient is formed as `Q_approx = N × X >> (FRAC_BITS + norm_shift)`, denormalising the reciprocal back to the original denominator scale.
+
+**S_CORRECT_DOWN / S_CORRECT_UP:** The correction loop checks `Q × D` against N and adjusts Q by ±1 until the exact integer quotient is found. Due to the bounded fixed-point error, this requires at most two iterations.
+
+**S_OUTPUT:** Remainder is computed as `N − Q × D` and both quotient and remainder are registered to the output ports.
+
+The seed ROM is implemented as a `localparam` array with entries pre-computed as `round(2^FRAC_BITS / D_mid)` where D_mid is the midpoint of each normalised sub-interval. For SEED_BITS = 4 the table has 8 entries; increasing SEED_BITS reduces the number of N-R iterations required for a given operand width.
 
 ---
 
