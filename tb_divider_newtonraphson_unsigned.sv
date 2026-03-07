@@ -195,7 +195,7 @@ initial begin
         $display("\t*** FAILURES DETECTED — see above ***");
     else
         $display("\t*** ALL TESTS PASSED ***");
-    $stop;
+    $finish;
 
 end
 
