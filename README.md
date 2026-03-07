@@ -2,7 +2,7 @@
 
 Synthesisable SystemVerilog implementations of classical integer division algorithms, with self-checking testbenches.
 
-Four iterative architectures are provided, covering both unsigned and signed operands, and four common algorithmic strategies: non-performing (skip-restore), restoring, non-restoring, and SRT radix-4.
+Five iterative architectures are provided, covering both unsigned and signed operands, and five common algorithmic strategies: non-performing (skip-restore), restoring, non-restoring, SRT radix-4, and Newton–Raphson functional iteration.
 
 ---
 
@@ -14,8 +14,9 @@ Four iterative architectures are provided, covering both unsigned and signed ope
 | `divider_nonperforming_unsigned` | Non-performing (skip-restore) | No | ≤ N cycles |
 | `divider_nonrestoring_signed` | Non-restoring | Yes | N + 1 cycles |
 | `divider_srt4_unsigned` | SRT radix-4 | No | ceil(N/2) + 3 cycles |
+| `divider_newtonraphson_unsigned` | Newton–Raphson | No | (ITERATIONS × 2) + 5 cycles |
 
-All modules use a shift-and-subtract iterative datapath and are parameterised by operand width `N`.
+All shift-subtract modules use a single adder/subtractor per active step and are parameterised by operand width `N`.  The Newton–Raphson module uses two sequential multipliers of width `DEN_BITS + 4`.
 
 ---
 
@@ -23,15 +24,17 @@ All modules use a shift-and-subtract iterative datapath and are parameterised by
 
 ```
 RTL_dividers/
-├── divider_restoring_unsigned.sv         # Restoring division, unsigned
-├── divider_nonperforming_unsigned.sv     # Non-performing division, unsigned
-├── divider_nonrestoring_signed.sv        # Non-restoring division, signed
-├── divider_srt4_unsigned.sv              # SRT radix-4 division, unsigned
-├── tb_divider_restoring_unsigned.sv      # Testbench — restoring
-├── tb_divider_nonperforming_unsigned.sv  # Testbench — non-performing
-├── tb_divider_nonrestoring_signed.sv     # Testbench — non-restoring
-├── tb_divider_srt4_unsigned.sv           # Testbench — SRT radix-4
-├── integer_dividers_report.md            # Technical report
+├── divider_restoring_unsigned.sv             # Restoring division, unsigned
+├── divider_nonperforming_unsigned.sv         # Non-performing division, unsigned
+├── divider_nonrestoring_signed.sv            # Non-restoring division, signed
+├── divider_srt4_unsigned.sv                  # SRT radix-4 division, unsigned
+├── divider_newtonraphson_unsigned.sv         # Newton-Raphson division, unsigned
+├── tb_divider_restoring_unsigned.sv          # Testbench — restoring
+├── tb_divider_nonperforming_unsigned.sv      # Testbench — non-performing
+├── tb_divider_nonrestoring_signed.sv         # Testbench — non-restoring
+├── tb_divider_srt4_unsigned.sv               # Testbench — SRT radix-4
+├── tb_divider_newtonraphson_unsigned.sv      # Testbench — Newton-Raphson
+├── integer_dividers_report.md                # Technical report
 └── README.md
 ```
 
@@ -57,6 +60,10 @@ vvp sim_nonrestoring
 # SRT radix-4 unsigned
 iverilog -g2012 -o sim_srt4 tb_divider_srt4_unsigned.sv divider_srt4_unsigned.sv
 vvp sim_srt4
+
+# Newton-Raphson unsigned
+iverilog -g2012 -o sim_nr tb_divider_newtonraphson_unsigned.sv divider_newtonraphson_unsigned.sv
+vvp sim_nr
 ```
 
 Each testbench defaults to an exhaustive sweep over all input combinations at 8-bit width (`TB_TEST_CNT = 0`).  Set `TB_TEST_CNT = N` for corner cases plus N random trials, which is appropriate for wider configurations.
@@ -78,3 +85,10 @@ Never restores; instead records −1 or +1 quotient digits. Remainders are allow
 Produces **two quotient bits per cycle** by performing two consecutive non-restoring steps within each clock period.  The combined quotient digit comes from the redundant digit set {−3, −2, −1, 0, +1, +2, +3}, accumulated in a positive/negative pair of registers (QPOS, QNEG).  The final binary quotient is QPOS − QNEG, followed by a single remainder correction if needed.
 
 The critical path per cycle is two cascaded adders of width `DEN_BITS + 2`, compared with one adder in the radix-2 variants.  For timing-sensitive targets, register the mid-step result to pipeline across two cycles — at the cost of doubling the per-step latency (offsetting the radix-4 gain).  The implementation here performs both steps combinationally within a single clock, which is appropriate for moderate clock frequencies.
+
+### Newton–Raphson Division
+Computes the reciprocal of the denominator via the quadratically-convergent iteration `X_{i+1} = X_i × (2 − D × X_i)`, starting from a small lookup-table seed, then multiplies by the numerator to obtain the quotient.
+
+Each N-R step (2 clock cycles: one multiply to form `D×X`, one to form the update `X×(2−D×X)`) doubles the number of correct bits, so only `ITERATIONS=3` steps are needed for operands up to ~30 bits wide.  Latency is therefore `(ITERATIONS × 2) + 5` cycles — around 11 cycles for 8-bit operands — independent of the operand values.
+
+A post-iteration correction loop (at most 2 cycles) converts the approximate quotient to the exact integer value and recovers the exact remainder.  The dominant hardware cost is two multipliers of width `DEN_BITS + 4`; the module is therefore significantly larger than the shift-subtract variants but offers constant, operand-value-independent latency.
