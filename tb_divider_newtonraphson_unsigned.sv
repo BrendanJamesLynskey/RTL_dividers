@@ -48,9 +48,9 @@ localparam TIMEOUT_CYCLES = 64;
 // -------------------------------------------------------------------------
 // Clock and reset
 // -------------------------------------------------------------------------
-reg tb_clk  = 1'b0;
-reg tb_srst = 1'b1;
-reg tb_ce   = 1'b1;
+logic tb_clk  = 1'b0;
+logic tb_srst = 1'b1;
+logic tb_ce   = 1'b1;
 
 always #5 tb_clk = ~tb_clk;   // 100 MHz
 
@@ -62,19 +62,19 @@ end
 // -------------------------------------------------------------------------
 // UUT connections
 // -------------------------------------------------------------------------
-reg  [DIV_NUM_BITS-1:0]  tb_numerator;
-reg  [DIV_DEN_BITS-1:0]  tb_denominator;
-wire [DIV_NUM_BITS-1:0]  tb_quotient;
-wire [DIV_DEN_BITS-1:0]  tb_remainder;
-reg                       tb_start = 1'b0;
-wire                      tb_error;
-wire                      tb_done;
+logic [DIV_NUM_BITS-1:0]  tb_numerator;
+logic [DIV_DEN_BITS-1:0]  tb_denominator;
+logic[DIV_NUM_BITS-1:0]  tb_quotient;
+logic[DIV_DEN_BITS-1:0]  tb_remainder;
+logic tb_start = 1'b0;
+logic                     tb_error;
+logic                     tb_done;
 
 // -------------------------------------------------------------------------
 // Pass / fail counters
 // -------------------------------------------------------------------------
-integer pass_cnt = 0;
-integer fail_cnt = 0;
+int pass_cnt = 0;
+int fail_cnt = 0;
 
 // -------------------------------------------------------------------------
 // Task: drive one (num, den) pair, wait for done, check outputs
@@ -173,7 +173,7 @@ initial begin
         // ----------------------------------------------------------------
         // Random trials
         // ----------------------------------------------------------------
-        for (stim_num = 0; stim_num < TB_TEST_CNT; stim_num = stim_num + 1) begin
+        for (integer trial_i = 0; trial_i < TB_TEST_CNT; trial_i = trial_i + 1) begin
             stim_den = $urandom % (2**DIV_DEN_BITS);
             stim_num = $urandom % (2**DIV_NUM_BITS);
             if (stim_den == 0) begin
@@ -195,7 +195,7 @@ initial begin
         $display("\t*** FAILURES DETECTED — see above ***");
     else
         $display("\t*** ALL TESTS PASSED ***");
-    $finish;
+    $stop;
 
 end
 

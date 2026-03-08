@@ -62,18 +62,18 @@ module divider_newtonraphson_unsigned
     parameter  SEED_BITS    = 4
 )
 (
-    input  wire                              SRST,
-    input  wire                              CLK,
-    input  wire                              CE,
+    input  logic                              SRST,
+    input  logic                              CLK,
+    input  logic                              CE,
 
-    input  wire [DIV_NUM_BITS-1:0]           NUMERATOR_IN,
-    input  wire [DIV_DEN_BITS-1:0]           DENOMINATOR_IN,
-    output reg  [DIV_NUM_BITS-1:0]           QUOTIENT_OUT,
-    output reg  [DIV_DEN_BITS-1:0]           REMAINDER_OUT,
+    input  logic [DIV_NUM_BITS-1:0]           NUMERATOR_IN,
+    input  logic [DIV_DEN_BITS-1:0]           DENOMINATOR_IN,
+    output logic [DIV_NUM_BITS-1:0]           QUOTIENT_OUT,
+    output logic [DIV_DEN_BITS-1:0]           REMAINDER_OUT,
 
-    input  wire                              start,
-    output reg                               error,
-    output reg                               done
+    input  logic                              start,
+    output logic                              error,
+    output logic                              done
 );
 
 // ---------------------------------------------------------------------------
@@ -104,17 +104,22 @@ localparam RECIP_SHIFT_BASE = FRAC_BITS + DIV_DEN_BITS - 1;
 //       d = 1.0 + (i + 0.5) / N
 //       print(round(2**FRAC_BITS / d))
 // ---------------------------------------------------------------------------
-reg [FRAC_BITS-1:0] seed_rom [0:SEED_ENTRIES-1];
+logic [FRAC_BITS-1:0] seed_rom [0:SEED_ENTRIES-1];
 
+// Generate seed ROM entries for any SEED_BITS / FRAC_BITS combination.
+// entry[i] = round( 2^FRAC_BITS / (1.0 + (i + 0.5) / SEED_ENTRIES) )
+//          = (2^FRAC_BITS * 2 * SEED_ENTRIES + (2*i+1) * SEED_ENTRIES)
+//            / ((2*i+1) * SEED_ENTRIES + 2 * SEED_ENTRIES * SEED_ENTRIES)
+//
+// Simplified integer arithmetic:
+//   D_mid_num = 2 * SEED_ENTRIES + (2*i + 1)   (numerator of D_mid in units of 1/(2*SE))
+//   entry[i]  = (2^FRAC_BITS * 2 * SEED_ENTRIES + D_mid_num/2) / D_mid_num
+integer seed_i;
 initial begin
-    seed_rom[0] = 964;   // D_mid=1.0625
-    seed_rom[1] = 862;   // D_mid=1.1875
-    seed_rom[2] = 780;   // D_mid=1.3125
-    seed_rom[3] = 712;   // D_mid=1.4375
-    seed_rom[4] = 655;   // D_mid=1.5625
-    seed_rom[5] = 607;   // D_mid=1.6875
-    seed_rom[6] = 565;   // D_mid=1.8125
-    seed_rom[7] = 529;   // D_mid=1.9375
+    for (seed_i = 0; seed_i < SEED_ENTRIES; seed_i = seed_i + 1) begin
+        seed_rom[seed_i] = ((1 << FRAC_BITS) * 2 * SEED_ENTRIES + (2 * SEED_ENTRIES + 2 * seed_i + 1))
+                           / (2 * SEED_ENTRIES + 2 * seed_i + 1);
+    end
 end
 
 // ---------------------------------------------------------------------------
@@ -130,43 +135,43 @@ localparam [3:0] S_IDLE           = 4'd0,
                  S_OUTPUT         = 4'd7,
                  S_ERROR          = 4'd8;
 
-reg [3:0] state;
+logic [3:0] state;
 
 // ---------------------------------------------------------------------------
 // Datapath registers
 // ---------------------------------------------------------------------------
-reg [DIV_DEN_BITS-1:0]              D_norm;
-reg [SHIFT_BITS-1:0]               norm_shift;
-reg [FRAC_BITS-1:0]                X;
-reg [ITER_BITS-1:0]                iter_cnt;
-reg [DIV_NUM_BITS-1:0]             N_saved;
-reg [DIV_DEN_BITS-1:0]             D_saved;
-reg [W-1:0]                        DX;
-reg [Q_BITS-1:0]                   Q_work;
+logic [DIV_DEN_BITS-1:0]              D_norm;
+logic [SHIFT_BITS-1:0]               norm_shift;
+logic [FRAC_BITS-1:0]                X;
+logic [ITER_BITS-1:0]                iter_cnt;
+logic [DIV_NUM_BITS-1:0]             N_saved;
+logic [DIV_DEN_BITS-1:0]             D_saved;
+logic [W-1:0]                        DX;
+logic [Q_BITS-1:0]                   Q_work;
 
 // Correction products — combinational (Guide §6)
-reg [CORR_W-1:0]                   corr_prod_down;
-reg [CORR_W-1:0]                   corr_prod_up;
+logic [CORR_W-1:0]                   corr_prod_down;
+logic [CORR_W-1:0]                   corr_prod_up;
 
 // ---------------------------------------------------------------------------
 // Hoisted local variables (Guide §1)
 // ---------------------------------------------------------------------------
-reg [SHIFT_BITS-1:0]               nr_mpos;
-reg [SEED_BITS-2:0]                nr_seed_idx;
-reg [DIV_DEN_BITS-1:0]             nr_dn;
-reg [W-1:0]                        nr_d_ext, nr_x_ext;
-reg [W2-1:0]                       nr_prod;
-reg [W-1:0]                        nr_two_minus_dx;
-reg [DIV_NUM_BITS+FRAC_BITS-1:0]   nr_nx_prod;
-reg [DIV_NUM_BITS+FRAC_BITS-1:0]   nr_q_shifted;
-reg [7:0]                          nr_total_shift;
+logic [SHIFT_BITS-1:0]               nr_mpos;
+logic [SEED_BITS-2:0]                nr_seed_idx;
+logic [DIV_DEN_BITS-1:0]             nr_dn;
+logic [W-1:0]                        nr_d_ext, nr_x_ext;
+logic [W2-1:0]                       nr_prod;
+logic [W-1:0]                        nr_two_minus_dx;
+logic [DIV_NUM_BITS+FRAC_BITS-1:0]   nr_nx_prod;
+logic [DIV_NUM_BITS+FRAC_BITS-1:0]   nr_q_shifted;
+logic [7:0]                          nr_total_shift;
 
 // ---------------------------------------------------------------------------
 // MSB position: combinational (Guide §4)
 // ---------------------------------------------------------------------------
-reg [SHIFT_BITS-1:0] c_msb_pos;
-integer msb_i;
-always @(*) begin
+logic [SHIFT_BITS-1:0] c_msb_pos;
+int msb_i;
+always_comb begin
     c_msb_pos = 0;
     for (msb_i = 0; msb_i < DIV_DEN_BITS; msb_i = msb_i + 1)
         if (D_saved[msb_i]) c_msb_pos = msb_i[SHIFT_BITS-1:0];
@@ -175,7 +180,7 @@ end
 // ---------------------------------------------------------------------------
 // Correction products: combinational (Guide §6, §7)
 // ---------------------------------------------------------------------------
-always @(*) begin
+always_comb begin
     corr_prod_down = Q_work * D_saved;
     corr_prod_up   = (Q_work + 1) * D_saved;
 end
@@ -183,7 +188,7 @@ end
 // ---------------------------------------------------------------------------
 // FSM + datapath
 // ---------------------------------------------------------------------------
-always @(posedge CLK) begin
+always_ff @(posedge CLK) begin
 
     if (SRST) begin
         state         <= S_IDLE;
