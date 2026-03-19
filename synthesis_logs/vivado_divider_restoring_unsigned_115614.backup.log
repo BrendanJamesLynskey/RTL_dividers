@@ -1,0 +1,34 @@
+#-----------------------------------------------------------
+# Vivado v2025.2 (64-bit)
+# SW Build 6299465 on Fri Nov 14 12:34:56 MST 2025
+# IP Build 6300035 on Fri Nov 14 10:48:45 MST 2025
+# SharedData Build 6298862 on Thu Nov 13 04:50:51 MST 2025
+# Start of session at: Thu Mar 19 16:06:23 2026
+# Process ID         : 115614
+# Current directory  : /home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs
+# Command line       : vivado -mode batch -source synth_divider_restoring_unsigned.tcl -log vivado_divider_restoring_unsigned.log -journal vivado_divider_restoring_unsigned.jou
+# Log file           : /home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs/vivado_divider_restoring_unsigned.log
+# Journal file       : /home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs/vivado_divider_restoring_unsigned.jou
+# Running On         : bren-ubuntu24-04
+# Platform           : Ubuntu
+# Operating System   : Ubuntu 24.04.4 LTS
+# Processor Detail   : Intel(R) Core(TM) i7-3770 CPU @ 3.40GHz
+# CPU Frequency      : 3692.132 MHz
+# CPU Physical cores : 4
+# CPU Logical cores  : 8
+# Host memory        : 16630 MB
+# Swap memory        : 4294 MB
+# Total Virtual      : 20925 MB
+# Available Virtual  : 9652 MB
+#-----------------------------------------------------------
+source synth_divider_restoring_unsigned.tcl
+# create_project -in_memory -part xc7a35tcpg236-1
+create_project: Time (s): cpu = 00:00:18 ; elapsed = 00:00:11 . Memory (MB): peak = 1628.223 ; gain = 131.715 ; free physical = 300 ; free virtual = 7146
+# read_verilog -sv /home/brendan/synthesis_workspace/Integer_dividers/divider_restoring_unsigned.sv
+# read_xdc /home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs/clock.xdc
+# synth_design -top divider_restoring_unsigned -part xc7a35tcpg236-1
+Command: synth_design -top divider_restoring_unsigned -part xc7a35tcpg236-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a35t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35t'
+INFO: [Device 21-403] Loading part xc7a35tcpg236-1

@@ -1,0 +1,323 @@
+#-----------------------------------------------------------
+# Vivado v2025.2 (64-bit)
+# SW Build 6299465 on Fri Nov 14 12:34:56 MST 2025
+# IP Build 6300035 on Fri Nov 14 10:48:45 MST 2025
+# SharedData Build 6298862 on Thu Nov 13 04:50:51 MST 2025
+# Start of session at: Thu Mar 19 16:58:59 2026
+# Process ID         : 12269
+# Current directory  : /home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs
+# Command line       : vivado -mode batch -source synth_divider_newtonraphson_unsigned.tcl -log vivado_divider_newtonraphson_unsigned.log -journal vivado_divider_newtonraphson_unsigned.jou
+# Log file           : /home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs/vivado_divider_newtonraphson_unsigned.log
+# Journal file       : /home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs/vivado_divider_newtonraphson_unsigned.jou
+# Running On         : bren-ubuntu24-04
+# Platform           : Ubuntu
+# Operating System   : Ubuntu 24.04.4 LTS
+# Processor Detail   : Intel(R) Core(TM) i7-3770 CPU @ 3.40GHz
+# CPU Frequency      : 2835.992 MHz
+# CPU Physical cores : 4
+# CPU Logical cores  : 8
+# Host memory        : 16630 MB
+# Swap memory        : 4294 MB
+# Total Virtual      : 20925 MB
+# Available Virtual  : 15234 MB
+#-----------------------------------------------------------
+source synth_divider_newtonraphson_unsigned.tcl
+# set_param general.maxThreads 4
+# create_project -in_memory -part xc7a35tcpg236-1
+# read_verilog -sv /home/brendan/synthesis_workspace/Integer_dividers/divider_newtonraphson_unsigned.sv
+# set xdc_file "/home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs/clock_divider_newtonraphson_unsigned.xdc"
+# set fp [open $xdc_file w]
+# puts $fp "create_clock -period 10.000 -name CLK \[get_ports CLK\]"
+# close $fp
+# read_xdc $xdc_file
+# synth_design -top divider_newtonraphson_unsigned -part xc7a35tcpg236-1
+Command: synth_design -top divider_newtonraphson_unsigned -part xc7a35tcpg236-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7a35t'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7a35t'
+INFO: [Device 21-403] Loading part xc7a35tcpg236-1
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 4 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 12298
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2215.723 ; gain = 480.188 ; free physical = 8295 ; free virtual = 13174
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'divider_newtonraphson_unsigned' [/home/brendan/synthesis_workspace/Integer_dividers/divider_newtonraphson_unsigned.sv:57]
+INFO: [Synth 8-6155] done synthesizing module 'divider_newtonraphson_unsigned' (0#1) [/home/brendan/synthesis_workspace/Integer_dividers/divider_newtonraphson_unsigned.sv:57]
+WARNING: [Synth 8-6014] Unused sequential element nr_mpos_reg was removed.  [/home/brendan/synthesis_workspace/Integer_dividers/divider_newtonraphson_unsigned.sv:234]
+WARNING: [Synth 8-6014] Unused sequential element nr_dn_reg was removed.  [/home/brendan/synthesis_workspace/Integer_dividers/divider_newtonraphson_unsigned.sv:236]
+WARNING: [Synth 8-6014] Unused sequential element nr_seed_idx_reg was removed.  [/home/brendan/synthesis_workspace/Integer_dividers/divider_newtonraphson_unsigned.sv:240]
+WARNING: [Synth 8-6014] Unused sequential element nr_d_ext_reg was removed.  [/home/brendan/synthesis_workspace/Integer_dividers/divider_newtonraphson_unsigned.sv:262]
+WARNING: [Synth 8-6014] Unused sequential element nr_x_ext_reg was removed.  [/home/brendan/synthesis_workspace/Integer_dividers/divider_newtonraphson_unsigned.sv:263]
+WARNING: [Synth 8-6014] Unused sequential element nr_prod_reg was removed.  [/home/brendan/synthesis_workspace/Integer_dividers/divider_newtonraphson_unsigned.sv:264]
+WARNING: [Synth 8-6014] Unused sequential element nr_two_minus_dx_reg was removed.  [/home/brendan/synthesis_workspace/Integer_dividers/divider_newtonraphson_unsigned.sv:279]
+WARNING: [Synth 8-6014] Unused sequential element nr_nx_prod_reg was removed.  [/home/brendan/synthesis_workspace/Integer_dividers/divider_newtonraphson_unsigned.sv:301]
+WARNING: [Synth 8-6014] Unused sequential element nr_total_shift_reg was removed.  [/home/brendan/synthesis_workspace/Integer_dividers/divider_newtonraphson_unsigned.sv:302]
+WARNING: [Synth 8-6014] Unused sequential element nr_q_shifted_reg was removed.  [/home/brendan/synthesis_workspace/Integer_dividers/divider_newtonraphson_unsigned.sv:303]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:08 ; elapsed = 00:00:08 . Memory (MB): peak = 2302.691 ; gain = 567.156 ; free physical = 8215 ; free virtual = 13096
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:08 ; elapsed = 00:00:08 . Memory (MB): peak = 2311.598 ; gain = 576.062 ; free physical = 8215 ; free virtual = 13096
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:08 ; elapsed = 00:00:08 . Memory (MB): peak = 2311.598 ; gain = 576.062 ; free physical = 8215 ; free virtual = 13096
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2311.598 ; gain = 0.000 ; free physical = 8215 ; free virtual = 13096
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs/clock_divider_newtonraphson_unsigned.xdc]
+Finished Parsing XDC File [/home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs/clock_divider_newtonraphson_unsigned.xdc]
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2465.582 ; gain = 0.000 ; free physical = 8223 ; free virtual = 13104
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2465.617 ; gain = 0.000 ; free physical = 8231 ; free virtual = 13112
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:17 ; elapsed = 00:00:17 . Memory (MB): peak = 2465.617 ; gain = 730.082 ; free physical = 8294 ; free virtual = 13175
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7a35tcpg236-1
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:17 ; elapsed = 00:00:17 . Memory (MB): peak = 2477.793 ; gain = 742.258 ; free physical = 8294 ; free virtual = 13175
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:17 ; elapsed = 00:00:17 . Memory (MB): peak = 2477.793 ; gain = 742.258 ; free physical = 8294 ; free virtual = 13175
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:17 ; elapsed = 00:00:17 . Memory (MB): peak = 2477.793 ; gain = 742.258 ; free physical = 8299 ; free virtual = 13181
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input   12 Bit       Adders := 1     
+	   2 Input   10 Bit       Adders := 2     
+	   2 Input    2 Bit       Adders := 1     
++---Registers : 
+	               10 Bit    Registers := 5     
+	                8 Bit    Registers := 5     
+	                4 Bit    Registers := 1     
+	                3 Bit    Registers := 1     
+	                2 Bit    Registers := 1     
+	                1 Bit    Registers := 2     
++---Muxes : 
+	   9 Input   10 Bit        Muxes := 1     
+	  10 Input   10 Bit        Muxes := 1     
+	   2 Input    3 Bit        Muxes := 1     
+	  10 Input    2 Bit        Muxes := 1     
+	  10 Input    1 Bit        Muxes := 11    
+	   2 Input    1 Bit        Muxes := 1     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 90 (col length:60)
+BRAMs: 100 (col length: RAMB18 60 RAMB36 30)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+DSP Report: Generating DSP DX_reg, operation Mode is: (A2*B2)'.
+DSP Report: register X_reg is absorbed into DSP DX_reg.
+DSP Report: register DX_reg is absorbed into DSP DX_reg.
+DSP Report: register DX_reg is absorbed into DSP DX_reg.
+DSP Report: operator DX0 is absorbed into DSP DX_reg.
+DSP Report: Generating DSP X0, operation Mode is: A*B2.
+DSP Report: register X_reg is absorbed into DSP X0.
+DSP Report: operator X0 is absorbed into DSP X0.
+DSP Report: Generating DSP Q_work2, operation Mode is: A2*B2.
+DSP Report: register X_reg is absorbed into DSP Q_work2.
+DSP Report: register N_saved_reg is absorbed into DSP Q_work2.
+DSP Report: operator Q_work2 is absorbed into DSP Q_work2.
+DSP Report: Generating DSP state2, operation Mode is: A2*B2.
+DSP Report: register D_saved_reg is absorbed into DSP state2.
+DSP Report: register Q_work_reg is absorbed into DSP state2.
+DSP Report: operator state2 is absorbed into DSP state2.
+DSP Report: Generating DSP state2, operation Mode is: (D'+(A:0x1))*B2.
+DSP Report: register D_saved_reg is absorbed into DSP state2.
+DSP Report: register Q_work_reg is absorbed into DSP state2.
+DSP Report: operator state2 is absorbed into DSP state2.
+DSP Report: operator state3 is absorbed into DSP state2.
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:20 ; elapsed = 00:00:20 . Memory (MB): peak = 2477.793 ; gain = 742.258 ; free physical = 8276 ; free virtual = 13162
+---------------------------------------------------------------------------------
+ Sort Area is  DX_reg_0 : 0 0 : 889 889 : Used 1 time 0
+ Sort Area is  X0_2 : 0 0 : 855 855 : Used 1 time 0
+ Sort Area is  state2_7 : 0 0 : 650 650 : Used 1 time 0
+ Sort Area is  Q_work2_4 : 0 0 : 578 578 : Used 1 time 0
+ Sort Area is  state2_6 : 0 0 : 578 578 : Used 1 time 0
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+DSP: Preliminary Mapping Report (see note below. The ' indicates corresponding REG is set)
++-------------------------------+-----------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name                    | DSP Mapping     | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++-------------------------------+-----------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|divider_newtonraphson_unsigned | (A2*B2)'        | 10     | 12     | -      | -      | 22     | 1    | 1    | -    | -    | -     | 1    | 0    | 
+|divider_newtonraphson_unsigned | A*B2            | 12     | 10     | -      | -      | 22     | 0    | 1    | -    | -    | -     | 0    | 0    | 
+|divider_newtonraphson_unsigned | A2*B2           | 10     | 8      | -      | -      | 18     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|divider_newtonraphson_unsigned | A2*B2           | 10     | 8      | -      | -      | 18     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|divider_newtonraphson_unsigned | (D'+(A:0x1))*B2 | 1      | 8      | -      | 10     | 19     | 0    | 1    | -    | 1    | 0     | 0    | 0    | 
++-------------------------------+-----------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:28 ; elapsed = 00:00:28 . Memory (MB): peak = 2581.793 ; gain = 846.258 ; free physical = 8156 ; free virtual = 13042
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:28 ; elapsed = 00:00:29 . Memory (MB): peak = 2607.824 ; gain = 872.289 ; free physical = 8137 ; free virtual = 13024
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:29 ; elapsed = 00:00:29 . Memory (MB): peak = 2607.824 ; gain = 872.289 ; free physical = 8139 ; free virtual = 13025
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:33 ; elapsed = 00:00:34 . Memory (MB): peak = 2788.637 ; gain = 1053.102 ; free physical = 7974 ; free virtual = 12860
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:33 ; elapsed = 00:00:34 . Memory (MB): peak = 2788.637 ; gain = 1053.102 ; free physical = 7974 ; free virtual = 12860
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:33 ; elapsed = 00:00:34 . Memory (MB): peak = 2788.637 ; gain = 1053.102 ; free physical = 7974 ; free virtual = 12860
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:33 ; elapsed = 00:00:34 . Memory (MB): peak = 2788.637 ; gain = 1053.102 ; free physical = 7974 ; free virtual = 12860
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:33 ; elapsed = 00:00:34 . Memory (MB): peak = 2788.637 ; gain = 1053.102 ; free physical = 7974 ; free virtual = 12860
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:33 ; elapsed = 00:00:34 . Memory (MB): peak = 2788.637 ; gain = 1053.102 ; free physical = 7974 ; free virtual = 12860
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+DSP Final Report (the ' indicates corresponding REG is set)
++-------------------------------+-------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name                    | DSP Mapping | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++-------------------------------+-------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|divider_newtonraphson_unsigned | (A'*B')'    | 10     | 11     | -      | -      | 22     | 1    | 1    | -    | -    | -     | 0    | 1    | 
+|divider_newtonraphson_unsigned | A*B'        | 12     | 10     | -      | -      | 22     | 0    | 1    | -    | -    | -     | 0    | 0    | 
+|divider_newtonraphson_unsigned | A'*B'       | 10     | 8      | -      | -      | 18     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|divider_newtonraphson_unsigned | A'*B'       | 10     | 8      | -      | -      | 18     | 1    | 1    | -    | -    | -     | 0    | 0    | 
+|divider_newtonraphson_unsigned | D'+A*B'     | 1      | 8      | -      | 10     | 19     | 0    | 1    | -    | 1    | 0     | 0    | 0    | 
++-------------------------------+-------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+--------+------+
+|      |Cell    |Count |
++------+--------+------+
+|1     |BUFG    |     1|
+|2     |CARRY4  |    17|
+|3     |DSP48E1 |     5|
+|7     |LUT1    |    11|
+|8     |LUT2    |    36|
+|9     |LUT3    |    10|
+|10    |LUT4    |    36|
+|11    |LUT5    |    35|
+|12    |LUT6    |    48|
+|13    |FDRE    |    53|
+|14    |IBUF    |    20|
+|15    |OBUF    |    18|
++------+--------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:33 ; elapsed = 00:00:34 . Memory (MB): peak = 2788.637 ; gain = 1053.102 ; free physical = 7974 ; free virtual = 12860
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 0 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:32 ; elapsed = 00:00:32 . Memory (MB): peak = 2788.637 ; gain = 899.082 ; free physical = 7974 ; free virtual = 12860
+Synthesis Optimization Complete : Time (s): cpu = 00:00:33 ; elapsed = 00:00:34 . Memory (MB): peak = 2788.645 ; gain = 1053.102 ; free physical = 7974 ; free virtual = 12860
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2788.645 ; gain = 0.000 ; free physical = 7974 ; free virtual = 12860
+INFO: [Netlist 29-17] Analyzing 22 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Parsing XDC File [/home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs/clock_divider_newtonraphson_unsigned.xdc]
+Finished Parsing XDC File [/home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs/clock_divider_newtonraphson_unsigned.xdc]
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2825.270 ; gain = 0.000 ; free physical = 8144 ; free virtual = 13030
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Synth Design complete | Checksum: 6f14bcac
+INFO: [Common 17-83] Releasing license: Synthesis
+16 Infos, 10 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:42 ; elapsed = 00:00:40 . Memory (MB): peak = 2825.305 ; gain = 1212.910 ; free physical = 8144 ; free virtual = 13030
+INFO: [Common 17-2834] synth_design peak Physical Memory [PSS] (MB): overall = 2181.403; main = 2145.112; forked = 345.520
+INFO: [Common 17-2834] synth_design peak Virtual Memory [VSS] (MB): overall = 3663.844; main = 2825.273; forked = 1028.016
+# report_utilization -file /home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs/utilization_divider_newtonraphson_unsigned.rpt
+# report_timing_summary -file /home/brendan/synthesis_workspace/Integer_dividers/synthesis_logs/timing_divider_newtonraphson_unsigned.rpt
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -1, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 4 CPUs
+report_timing_summary: Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 2841.270 ; gain = 15.965 ; free physical = 8110 ; free virtual = 12996
+INFO: [Common 17-206] Exiting Vivado at Thu Mar 19 16:59:52 2026...
